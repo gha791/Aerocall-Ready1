@@ -2,7 +2,6 @@
 import type { Metadata } from 'next';
 import { Inter as FontSans, Poppins as FontHeadline } from 'next/font/google';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import Script from 'next/script';
 import { AuthProvider } from '@/hooks/use-auth';
@@ -40,7 +39,6 @@ export default function RootLayout({
         <AuthProvider>
             {children}
         </AuthProvider>
-        <Toaster />
         <Script src="https://cdn.paddle.com/paddle/paddle.js" />
       </body>
     </html>

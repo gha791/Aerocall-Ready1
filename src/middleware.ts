@@ -6,7 +6,13 @@ const PUBLIC_ROUTES = ['/login', '/signup', '/forgot-password'];
 
 async function verifySession(sessionCookie: string): Promise<boolean> {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/verify`, {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+        if (!siteUrl) {
+            console.warn('NEXT_PUBLIC_SITE_URL not set, skipping session verification');
+            return false;
+        }
+
+        const response = await fetch(`${siteUrl}/api/auth/verify`, {
             headers: {
                 'Cookie': `session=${sessionCookie}`
             }
