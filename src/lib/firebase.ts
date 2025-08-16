@@ -19,9 +19,25 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+let app, auth, db, storage;
+
+try {
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+  db = getFirestore(app);
+  storage = getStorage(app);
+} catch (error) {
+  console.warn('Firebase initialization failed:', error);
+  // Create dummy objects for development
+  auth = {
+    onAuthStateChanged: (callback: any) => {
+      callback(null); // No user
+      return () => {};
+    },
+    signOut: async () => {},
+  };
+  db = {};
+  storage = {};
+}
 
 export { app, auth, db, storage };

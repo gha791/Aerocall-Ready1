@@ -25,18 +25,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    // Check if Firebase auth is properly initialized
+    if (auth && typeof auth.onAuthStateChanged === 'function') {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setUser(user);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    } else {
+      // Firebase not available, skip authentication
+      console.warn('Firebase auth not available, skipping authentication');
       setLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
   }, []);
 
   const logOut = async () => {
-    await auth.signOut();
-    // Use fetch with the full URL for server-side calls from the client
-    await fetch('/api/auth/session', { method: 'DELETE' });
+    if (auth && typeof auth.signOut === 'function') {
+      await auth.signOut();
+      // Use fetch with the full URL for server-side calls from the client
+      await fetch('/api/auth/session', { method: 'DELETE' });
+    }
     router.push('/login');
   };
   
